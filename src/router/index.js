@@ -9,7 +9,13 @@ import usermessage from '../components/Usermessage.vue'
 import shangzhuang from '../components/ShangZhuang.vue'
 import qunzhuang from '../components/QunZhuang.vue'
 import xiazhuang from '../components/XiaZhuang.vue'
+import user from "../views/user.vue";
+import userupdate from "../components/userupdate.vue"
+import password from "../components/password.vue"
+import orderupdate from "../components/orderupdate.vue"
+import axios from 'axios'
 
+Vue.prototype.$axios = axios;
 
 Vue.use(Router)
 
@@ -26,7 +32,7 @@ export default new Router({
             component: index
         },
         {
-            path: '/productinfo/:index',
+            path: '/productinfo/:proid',
             name: 'productinfo',
             component: productinfo
         },
@@ -66,6 +72,27 @@ export default new Router({
             name: 'usermessage',
             component: usermessage
 
+        },
+        {
+            path: '/user',
+            name: 'user',
+            component: user
+
+        },
+        {
+            path: '/userupdate',
+            name: 'userupdate',
+            component: userupdate
+        },
+        {
+            path: '/password',
+            name: 'password',
+            component: password
+        },
+        {
+            path: '/orderupdate',
+            name: 'orderupdate',
+            component: orderupdate
         },
         {
             path: '*',

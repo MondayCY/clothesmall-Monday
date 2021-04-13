@@ -4,7 +4,7 @@
       <el-header height="60px">
       <el-row>
   <el-col :span="12"><div class="grid-content bg-purple mt-2" align="left">
-    <a href="../views/index.vue" class="text-decoration-none">
+    <a href="/user" class="text-decoration-none">
       <img src="../assets/m.png" alt="Mondat-Mall" style="width:40px;height:40px">
       <span class="font-weight-bolder align-middle text-dark" style="font-size:24px">Monday</span>
      </a> </div></el-col>
@@ -12,12 +12,13 @@
        <el-menu  class="el-menu-demo border-0" mode="horizontal">
          <el-menu-item index="1"><a href="/qunzhuang" class="text-decoration-none">裙装系列</a></el-menu-item>
          <el-menu-item index="2"><a href="/xiazhuang" class="text-decoration-none">下装系列</a></el-menu-item>
+             <el-menu-item index="3"><a href="/user" class="text-decoration-none">回到首页</a></el-menu-item>
   <el-submenu index="6" class="float-right">
     <template slot="title">
-      <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar></template>
-    <el-menu-item index="6-1"><a href="" class="text-decoration-none">个人资料</a> </el-menu-item>
-    <el-menu-item index="6-2"><a href="" class="text-decoration-none">我的购物</a> </el-menu-item>
-    <el-menu-item index="6-3"> <a href="../views/index.vue" class="text-decoration-none">退出登录</a> </el-menu-item>
+      <el-avatar :src="userimage"></el-avatar></template>
+     <el-menu-item index="6-1"><a href="/usermessage" class=" text-decoration-none">个人中心</a> </el-menu-item>
+    <el-menu-item index="6-2"><a href="/order" class=" text-decoration-none">我的购物</a> </el-menu-item>
+    <el-menu-item index="6-3"> <a href="../views/index.vue" class=" text-decoration-none">退出登录</a> </el-menu-item>
   </el-submenu>
 </el-menu>
       </div></el-col>
@@ -25,21 +26,23 @@
 </el-header>
  <el-main>
      <div class="card w-50 ml-auto mr-auto border-0 mb-3" style="background-color:transparent">
-  <div class="card-body text-center text-dark" style="font-size:18px">
+  <div class="card-body text-center text-dark font-weight-bold" style="font-size:20px">
     上装系列
   </div>
 </div>
-<div class="card-deck">
-   <div class="card-group">
-  <div class="card" style="width:18rem" v-for="(item,index) in shang" :key="index">
-    <a href="">
-  <img :src="item.img" class="card-img-top" alt="Monday"></a>
-  <div class="card-body">
-    <p class="card-text">{{item.introduce}}</p>
-    <span>{{item.pirce}}</span>元
-   <button type="button" class="btn btn-outline-danger" @click="productinfo(item.index)">加入购物车</button>
-  </div>
-</div>
+<div class="box">
+  <div class="card ml-4 mb-3" style="width: 18rem" v-for="(item,proid) in shang" :key="proid">
+  <img :src="item.image" class="card-img-top" alt="Monday">
+      <div class="card-body">
+    <p class="card-text">{{item.product}}</p>
+    <div class="card text-center border border-light rounded-lg" style="line-height:20px">
+           <div class="card-body">
+       <span class="text-danger font-italic" style="font-size:24px;font-weight:bold">¥</span>
+    <span style="font-size:16px" class="mr-2">{{item.pirce}}</span>
+   <button type="button" class="btn btn-outline-danger" @click="productinfo(item.proid)">查看商品详情</button>
+           </div>
+           </div>
+           </div>
   </div>
 </div>
 
@@ -53,33 +56,52 @@ export default {
         return {
                  shang:[
             {
-              index:101,
-              img:require("../static/圣诞毛衣.jpg"),
-              introduce:"古着圣诞圆领套头毛衣女宽松外穿复古慵懒风针织衫",
-              pirce:"146"
-            },
-                {
-              index:102,
-              img:require("../static/好运卫衣.jpg"),
-              introduce:"新年好运福2021卫衣加绒加厚女闺蜜装宽松圆领上衣",
-              pirce:"112"
-            },
-                {
-              index:103,
-              img:require("../static/漫画T恤.jpg"),
-              introduce:"自画像卡通趣味白色t恤女宽松慵懒风短袖内搭上衣",
-              pirce:"79"
-            },
+              proid:'',
+              id:'',
+              image:'',
+              product:"",
+              pirce:""
+            }
           ],
         }
     },
+    created(){
+      const _this =this;
+       _this.userimage=_this.$store.getters.getUser.userimage;
+      this.$axios.get("http://localhost:8282/product/findAll").then(function(resp){
+        console.log(resp);
+        _this.shang=resp.data; 
+        console.log(_this.shang);
+        for(let i=0;i<_this.shang.length;i++)
+      {
+        if(_this.shang[i].kind=='下装' || _this.shang[i].kind=='裙装')
+        {
+          _this.shang.splice(i,1);
+          i--;
+        }
+        
+      }
+      console.log(_this.shang);
+      })
+      
+     
+      },
+     methods:{
+         productinfo(proid){
+    this.$router.push("/productinfo/"+proid)
+  },
+      }
 
 }
 </script>
 
-<style>
+<style scoped>
+.box{
+  display:flex;
+  flex-wrap: wrap;
+}
 .el-main{
-    height: 90vh;
+    height:80em;
     background-image: url('../static/登录界面.jpg');
     background-size: 100%;
 }
